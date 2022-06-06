@@ -7,7 +7,19 @@ export const getPhrase = async (
   res: Response,
   next: NextFunction
 ) => {
-  res.json({ message: "/:id" });
+  try {
+    const { id } = req.params;
+
+    const phrase = await Phrase.findById(id);
+    if (!phrase) throw new Error("Phrase not found.");
+
+    return res.status(200).json({ phrase });
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    return res.status(500).json({ message: "Something went wrong." });
+  }
 };
 
 // Fetch all phrase from the database
@@ -18,12 +30,14 @@ export const getAllPhrase = async (
 ) => {
   try {
     const allPhrases = await Phrase.find();
-    return res.status(200).json({ phrase: allPhrases });
+    if (!allPhrases || allPhrases.length == 0)
+      throw new Error("No phrases found");
+    return res.status(200).json({ phrases: allPhrases });
   } catch (error) {
     console.log(error);
     if (error instanceof Error)
-      return res.status(500).json({ message: error.message });
-    return res.status(500).json({ message: "Something went wrong" });
+      return res.status(400).json({ message: error.message });
+    return res.status(500).json({ message: "Something went wrong." });
   }
 };
 
@@ -33,11 +47,20 @@ export const createPhrase = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { words } = req.body;
+  try {
+    const { words } = req.body;
+    if (!words) throw new Error("No words provided.");
 
-  const phrase = new Phrase({ words });
-  await phrase.save();
-  res.json({ message: "Phrase created", phrase });
+    const phrase = new Phrase({ words });
+    await phrase.save();
+
+    return res.status(201).json({ message: "Phrase created.", phrase });
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    return res.status(500).json({ message: "Something went wrong." });
+  }
 };
 
 // Update a phrase in the database
@@ -46,7 +69,24 @@ export const updatePhrase = async (
   res: Response,
   next: NextFunction
 ) => {
-  res.json({ message: "/update" });
+  try {
+    const { id } = req.params;
+    const { words } = req.body;
+    if (!words) throw new Error("No words provided to update.");
+
+    const phrase = await Phrase.findById(id);
+    if (!phrase) throw new Error("Phrase not found.");
+
+    phrase.set({ words });
+    await phrase.save();
+
+    return res.status(200).json({ message: "Phrase updated.", phrase });
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    return res.status(500).json({ message: "Something went wrong." });
+  }
 };
 
 // Delete a phrase from the database
@@ -55,5 +95,19 @@ export const deletePhrase = async (
   res: Response,
   next: NextFunction
 ) => {
-  res.json({ message: "/delete" });
+  try {
+    const { id } = req.params;
+
+    const phrase = await Phrase.findById(id);
+    if (!phrase) throw new Error("Phrase not found to delete.");
+
+    await phrase.remove();
+
+    return res.status(200).json({ message: "Phrase deleted." });
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    return res.status(500).json({ message: "Something went wrong." });
+  }
 };
