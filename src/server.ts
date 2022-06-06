@@ -4,6 +4,7 @@ import morgan from "morgan";
 import "./helpers/db";
 import { config } from "./config/config";
 import phraseRoutes from "./routes/Phrase";
+import userRoutes from "./routes/User";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 app.use("/phrase", phraseRoutes);
+app.use("/auth", userRoutes);
 
 app.listen(config.server.port, (): void =>
   console.log(`Server Listening on port ${config.server.port}`)
