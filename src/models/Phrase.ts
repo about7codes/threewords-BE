@@ -6,7 +6,7 @@ interface IPhrase {
 
 interface IPhraseModel extends IPhrase, Document {}
 
-const phraseSchema = new Schema(
+const phraseSchema: Schema = new Schema(
   {
     words: { type: String, required: true },
   },
