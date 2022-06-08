@@ -7,6 +7,7 @@ export interface IUser {
   email: string;
   password: string;
   generateAuthToken(): string;
+  // findByCredentials(email: string, password: string): Promise<IUser>;
 }
 
 export interface IUserModel extends IUser, Document {}
@@ -48,10 +49,10 @@ userSchema.methods.generateAuthToken = function () {
   return authToken;
 };
 
-userSchema.methods.findByCredentials = async (
+userSchema.methods.findByCredentials = async function (
   email: string,
   password: string
-) => {
+) {
   const user = await User.findOne({ email });
   if (!user) throw new Error("User does not exist");
 

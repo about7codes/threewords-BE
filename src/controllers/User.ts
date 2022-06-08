@@ -9,7 +9,9 @@ export const signup = async (
 ) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) throw new Error("Email and password are required");
+
+    const userExists = await User.findOne({ email });
+    if (userExists) throw new Error("User already exists.");
 
     const user = await User.create({ email, password });
     user.set({ password: undefined });
@@ -37,7 +39,6 @@ export const signin = async (
 ) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) throw new Error("Email and password are required");
 
     const user = await User.schema.methods.findByCredentials(email, password);
     if (!user) throw new Error("User does not exist");

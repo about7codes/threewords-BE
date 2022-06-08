@@ -1,14 +1,20 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface IPhrase {
+export interface IPhrase {
   words: string;
 }
 
-interface IPhraseModel extends IPhrase, Document {}
+export interface IPhraseModel extends IPhrase, Document {}
 
 const phraseSchema: Schema = new Schema(
   {
-    words: { type: String, required: true },
+    words: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 1,
+      maxlength: 50,
+    },
   },
   { timestamps: true, versionKey: false }
 );
