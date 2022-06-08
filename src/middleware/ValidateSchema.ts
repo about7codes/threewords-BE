@@ -3,6 +3,7 @@ import Joi, { ObjectSchema } from "joi";
 import { IUser } from "../models/User";
 import { IPhrase } from "../models/Phrase";
 
+// Data validation middleware
 export const ValidateSchema = (schema: ObjectSchema) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -19,6 +20,7 @@ export const ValidateSchema = (schema: ObjectSchema) => {
 
 export const Schemas = {
   User: {
+    // Validation for Signup User route
     signup: Joi.object<IUser>({
       email: Joi.string().email().required().messages({
         "string.empty": "Email is required.",
@@ -29,6 +31,7 @@ export const Schemas = {
         "string.min": "Password must be at least 6 characters.",
       }),
     }),
+    // Validation for Signin User route
     signin: Joi.object<IUser>({
       email: Joi.string().email().required().messages({
         "string.empty": "Email is required.",
@@ -41,6 +44,7 @@ export const Schemas = {
     }),
   },
   Phrase: {
+    // Validation for Create Phrase route
     create: Joi.object<IPhrase>({
       words: Joi.string().trim().min(1).max(50).required().messages({
         "string.min": "Min 1 character is required.",
@@ -48,6 +52,7 @@ export const Schemas = {
         "string.empty": "Min 1 character is required.",
       }),
     }),
+    // Validation for Update Phrase route
     update: Joi.object<IPhrase>({
       words: Joi.string().trim().min(1).max(50).required().messages({
         "string.min": "Min 1 character is required.",
