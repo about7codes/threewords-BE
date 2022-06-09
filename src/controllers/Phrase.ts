@@ -10,7 +10,7 @@ export const getPhrase = async (
   try {
     const { id } = req.params;
 
-    const phrase = await Phrase.findById(id);
+    const phrase = await Phrase.findOne({ _id: id, owner: req?.user?._id });
     if (!phrase) throw new Error("Phrase not found.");
 
     return res.status(200).json({ phrase });
@@ -29,9 +29,12 @@ export const getAllPhrase = async (
   next: NextFunction
 ) => {
   try {
-    const allPhrases = await Phrase.find();
+    await req?.user?.populate("userPhrases");
+    const allPhrases = req?.user?.userPhrases;
+
     if (!allPhrases || allPhrases.length == 0)
       throw new Error("No phrases found");
+
     return res.status(200).json({ phrases: allPhrases });
   } catch (error) {
     console.log(error);
@@ -51,7 +54,10 @@ export const createPhrase = async (
     const { words } = req.body;
     if (!words) throw new Error("No words provided.");
 
-    const phrase = new Phrase({ words });
+    const isUnderFour = /^(?:\b\w+\b[\s\r\n]*){1,3}$/.test(words.trim());
+    if (!isUnderFour) throw new Error("Maximum of 3 words allowed.");
+
+    const phrase = new Phrase({ words, owner: req?.user?._id });
     await phrase.save();
 
     return res.status(201).json({ message: "Phrase created.", phrase });
@@ -74,7 +80,10 @@ export const updatePhrase = async (
     const { words } = req.body;
     if (!words) throw new Error("No words provided to update.");
 
-    const phrase = await Phrase.findById(id);
+    const isUnderFour = /^(?:\b\w+\b[\s\r\n]*){1,3}$/.test(words.trim());
+    if (!isUnderFour) throw new Error("Maximum of 3 words allowed.");
+
+    const phrase = await Phrase.findOne({ _id: id, owner: req?.user?._id });
     if (!phrase) throw new Error("Phrase not found.");
 
     phrase.set({ words });
@@ -98,7 +107,7 @@ export const deletePhrase = async (
   try {
     const { id } = req.params;
 
-    const phrase = await Phrase.findById(id);
+    const phrase = await Phrase.findOne({ _id: id, owner: req?.user?._id });
     if (!phrase) throw new Error("Phrase not found to delete.");
 
     await phrase.remove();

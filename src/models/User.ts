@@ -2,11 +2,13 @@ import mongoose, { Document, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { config } from "../config/config";
+import { IPhrase } from "./Phrase";
 
 export interface IUser {
   email: string;
   password: string;
   generateAuthToken(): string;
+  userPhrases: IPhrase[];
   // findByCredentials(email: string, password: string): Promise<IUser>;
 }
 
@@ -26,6 +28,13 @@ const userSchema: Schema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
+// Create a virtual field called userPhrases
+userSchema.virtual("userPhrases", {
+  ref: "Phrase",
+  localField: "_id",
+  foreignField: "owner",
+});
+
 // Before saving the user, hash the password
 userSchema.pre("save", async function (next) {
   const user = this as IUserModel;
@@ -38,17 +47,20 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// Generate a JWT and return it
 userSchema.methods.generateAuthToken = function () {
   const user = this as IUserModel;
 
   const authToken = jwt.sign(
     { id: user._id.toString() },
-    config.server.jwtSecret
+    config.server.jwtSecret,
+    { expiresIn: "1d" }
   );
 
   return authToken;
 };
 
+// Find a user by email and checking password
 userSchema.methods.findByCredentials = async function (
   email: string,
   password: string
