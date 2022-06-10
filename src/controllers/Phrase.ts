@@ -1,6 +1,30 @@
 import { NextFunction, Request, Response } from "express";
 import Phrase from "../models/Phrase";
 
+// Find phrase by id
+export const phraseById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  phraseId: string
+) => {
+  try {
+    const phrase = await Phrase.findOne({
+      _id: phraseId,
+      owner: req?.user?._id,
+    });
+    if (!phrase) throw new Error("Phrase not found");
+
+    req.phrase = phrase;
+    next();
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Error)
+      return res.status(400).json({ error: error.message });
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+};
+
 // Fetch 1 phrase from the database
 export const getPhrase = async (
   req: Request,
@@ -8,10 +32,7 @@ export const getPhrase = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
-
-    const phrase = await Phrase.findOne({ _id: id, owner: req?.user?._id });
-    if (!phrase) throw new Error("Phrase not found.");
+    const { phrase } = req;
 
     return res.status(200).json({ phrase });
   } catch (error) {
@@ -76,14 +97,13 @@ export const updatePhrase = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
     const { words } = req.body;
     if (!words) throw new Error("No words provided to update.");
 
     const isUnderFour = /^(?:\b\w+\b[\s\r\n]*){1,3}$/.test(words.trim());
     if (!isUnderFour) throw new Error("Maximum of 3 words allowed.");
 
-    const phrase = await Phrase.findOne({ _id: id, owner: req?.user?._id });
+    const { phrase } = req;
     if (!phrase) throw new Error("Phrase not found.");
 
     phrase.set({ words });
@@ -105,9 +125,7 @@ export const deletePhrase = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
-
-    const phrase = await Phrase.findOne({ _id: id, owner: req?.user?._id });
+    const { phrase } = req;
     if (!phrase) throw new Error("Phrase not found to delete.");
 
     await phrase.remove();

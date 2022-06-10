@@ -5,6 +5,7 @@ import {
   createPhrase,
   updatePhrase,
   deletePhrase,
+  phraseById,
 } from "../controllers/Phrase";
 import auth from "../middleware/auth";
 import { Schemas, ValidateSchema } from "../middleware/ValidateSchema";
@@ -15,13 +16,15 @@ const router = express.Router();
 router.use(auth);
 
 router.get("/all", getAllPhrase);
-router.get("/:id", getPhrase);
+router.get("/:phraseId", getPhrase);
 router.post("/new", ValidateSchema(Schemas.Phrase.create), createPhrase);
 router.patch(
-  "/update/:id",
+  "/update/:phraseId",
   ValidateSchema(Schemas.Phrase.update),
   updatePhrase
 );
-router.delete("/delete/:id", deletePhrase);
+router.delete("/delete/:phraseId", deletePhrase);
+
+router.param("phraseId", phraseById);
 
 export default router;

@@ -1,12 +1,14 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { config } from "../config/config";
-import User, { IUser, IUserModel } from "../models/User";
+import User, { IUserModel } from "../models/User";
+import { IPhraseModel } from "../models/Phrase";
 
 declare module "express" {
   export interface Request {
     authToken?: string;
     user?: IUserModel;
+    phrase?: IPhraseModel;
   }
 }
 
