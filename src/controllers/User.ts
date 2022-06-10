@@ -53,3 +53,31 @@ export const signin = async (
     next(error);
   }
 };
+
+// Get User Profile
+export const getUserProfile = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { user } = req;
+    if (!user) throw new Error("User not found.");
+
+    const extraInfo: string[] = user.email.split("@");
+    console.log(extraInfo);
+
+    user.set({ password: undefined });
+
+    return res.status(200).json({
+      message: "User profile retrieved successfully.",
+      user: {
+        ...user.toObject(),
+        username: extraInfo[0],
+        emailProvider: extraInfo[1],
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
