@@ -10,10 +10,7 @@ export const ValidateSchema = (schema: ObjectSchema) => {
       await schema.validateAsync(req.body);
       next();
     } catch (error) {
-      console.log(error);
-      if (error instanceof Error)
-        return res.status(400).json({ error: error.message });
-      return res.status(500).json({ error: "Something went wrong." });
+      next(error);
     }
   };
 };
@@ -37,9 +34,8 @@ export const Schemas = {
         "string.empty": "Email is required.",
         "string.email": "Email is invalid.",
       }),
-      password: Joi.string().min(6).required().messages({
+      password: Joi.string().required().messages({
         "string.empty": "Password is required.",
-        "string.min": "Password must be at least 6 characters.",
       }),
     }),
   },

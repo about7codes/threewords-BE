@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+
 import { config } from "../config/config";
 import { IPhrase } from "./Phrase";
 

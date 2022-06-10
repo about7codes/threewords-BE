@@ -1,4 +1,6 @@
 import express from "express";
+import auth from "../middleware/auth";
+import { Schemas, ValidateSchema } from "../middleware/ValidateSchema";
 import {
   getPhrase,
   getAllPhrase,
@@ -7,8 +9,6 @@ import {
   deletePhrase,
   phraseById,
 } from "../controllers/Phrase";
-import auth from "../middleware/auth";
-import { Schemas, ValidateSchema } from "../middleware/ValidateSchema";
 
 const router = express.Router();
 

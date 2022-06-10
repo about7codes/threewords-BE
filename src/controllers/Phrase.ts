@@ -18,10 +18,7 @@ export const phraseById = async (
     req.phrase = phrase;
     next();
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 
@@ -36,10 +33,7 @@ export const getPhrase = async (
 
     return res.status(200).json({ phrase });
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 
@@ -58,10 +52,7 @@ export const getAllPhrase = async (
 
     return res.status(200).json({ phrases: allPhrases });
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 
@@ -83,10 +74,7 @@ export const createPhrase = async (
 
     return res.status(201).json({ message: "Phrase created.", phrase });
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 
@@ -111,10 +99,7 @@ export const updatePhrase = async (
 
     return res.status(200).json({ message: "Phrase updated.", phrase });
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 
@@ -132,9 +117,6 @@ export const deletePhrase = async (
 
     return res.status(200).json({ message: "Phrase deleted." });
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };

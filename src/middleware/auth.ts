@@ -1,8 +1,9 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
 import { config } from "../config/config";
-import User, { IUserModel } from "../models/User";
 import { IPhraseModel } from "../models/Phrase";
+import User, { IUserModel } from "../models/User";
 
 declare module "express" {
   export interface Request {
@@ -29,10 +30,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     req.user = user;
     next();
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 

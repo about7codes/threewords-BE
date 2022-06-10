@@ -24,10 +24,7 @@ export const signup = async (
       user,
     });
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 
@@ -53,9 +50,6 @@ export const signin = async (
       user,
     });
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error)
-      return res.status(400).json({ error: error.message });
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
