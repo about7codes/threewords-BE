@@ -27,9 +27,15 @@ app.use(morgan("dev"));
 app.use("/phrase", phraseRoutes);
 app.use("/auth", userRoutes);
 
+// 404 route handler
+app.all("*", (req: Request, res: Response, next: NextFunction) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
 // Error handler middleware
 app.use(ErrorHandler);
 
+// Start server
 app.listen(config.server.port, (): void =>
   console.log(`Server Listening on port ${config.server.port}`)
 );
