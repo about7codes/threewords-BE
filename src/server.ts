@@ -9,6 +9,10 @@ import userRoutes from "./routes/User";
 const app = express();
 
 // Server ping route
+app.get("/", (req: Request, res: Response, next: NextFunction) =>
+  res.json({ message: "Hello fellow developer." })
+);
+// Server ping route
 app.get("/ping", (req: Request, res: Response, next: NextFunction) =>
   res.json({ message: "pong" })
 );
