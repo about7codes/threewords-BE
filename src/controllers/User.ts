@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { verifyRefreshToken } from "../middleware/auth";
 import User from "../models/User";
 
 // Create a new User
@@ -17,9 +18,11 @@ export const signup = async (
     user.set({ password: undefined });
 
     const authToken = user.generateAuthToken();
+    const refreshToken = user.generateRefreshToken();
 
     return res.status(201).json({
       message: "User created successfully",
+      refreshToken,
       authToken,
       user,
     });
@@ -43,9 +46,11 @@ export const signin = async (
     user.set({ password: undefined });
 
     const authToken = user.generateAuthToken();
+    const refreshToken = user.generateRefreshToken();
 
     return res.status(201).json({
       message: "User logged in successfully",
+      refreshToken,
       authToken,
       user,
     });
@@ -76,6 +81,36 @@ export const getUserProfile = (
         username: extraInfo[0],
         emailProvider: extraInfo[1],
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Send Tokens
+export const sendTokens = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const refToken = req.header("Authorization")?.split(" ")[1];
+    if (!refToken) throw new Error("No token provided.");
+
+    const decodedToken = await verifyRefreshToken(refToken);
+    const user = await User.findById(decodedToken.id);
+    if (!user) throw new Error("User not found.");
+
+    const authToken = user.generateAuthToken();
+    const refreshToken = user.generateRefreshToken();
+
+    user.set({ password: undefined });
+
+    return res.json({
+      message: "Tokens sent successfully.",
+      refreshToken,
+      authToken,
+      user,
     });
   } catch (error) {
     next(error);

@@ -19,7 +19,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     if (!authToken) throw new Error("No token provided.");
 
     const decodedToken = <JwtPayload>(
-      jwt.verify(authToken, config.server.jwtSecret)
+      jwt.verify(authToken, config.server.jwtAuthSecret)
     );
     if (!decodedToken) throw new Error("Invalid token.");
 
@@ -32,6 +32,17 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const verifyRefreshToken = (
+  refreshToken: string
+): Promise<JwtPayload> => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(refreshToken, config.server.jwtRefreshSecret, (err, decoded) => {
+      if (err) reject(err);
+      resolve(decoded as any);
+    });
+  });
 };
 
 export default auth;

@@ -8,7 +8,8 @@ const MONGO_DB_NAME = process.env.DB_NAME || "";
 const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.wc4xq.mongodb.net/`;
 
 const SERVER_PORT = process.env.PORT || 8001;
-const JWT_SECRET = process.env.JWT_SECRET || "";
+const JWT_AUTH_SECRET = process.env.JWT_AUTH_SECRET || "";
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "";
 
 export const config = {
   mongo: {
@@ -17,6 +18,7 @@ export const config = {
   },
   server: {
     port: SERVER_PORT,
-    jwtSecret: JWT_SECRET,
+    jwtAuthSecret: JWT_AUTH_SECRET,
+    jwtRefreshSecret: JWT_REFRESH_SECRET,
   },
 };

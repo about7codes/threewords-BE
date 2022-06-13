@@ -9,6 +9,8 @@ export interface IUser {
   email: string;
   password: string;
   generateAuthToken(): string;
+  generateRefreshToken(): string;
+  verifyRefreshToken(): string;
   userPhrases: IPhrase[];
   // findByCredentials(email: string, password: string): Promise<IUser>;
 }
@@ -54,11 +56,24 @@ userSchema.methods.generateAuthToken = function () {
 
   const authToken = jwt.sign(
     { id: user._id.toString() },
-    config.server.jwtSecret,
-    { expiresIn: "1d" }
+    config.server.jwtAuthSecret,
+    { expiresIn: "15m" }
   );
 
   return authToken;
+};
+
+// Generate a Refresh JWT token and return it
+userSchema.methods.generateRefreshToken = function () {
+  const user = this as IUserModel;
+
+  const refreshToken = jwt.sign(
+    { id: user._id.toString() },
+    config.server.jwtRefreshSecret,
+    { expiresIn: "1d" }
+  );
+
+  return refreshToken;
 };
 
 // Find a user by email and checking password
