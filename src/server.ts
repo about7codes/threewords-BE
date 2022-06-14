@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
+import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
 
@@ -22,8 +23,18 @@ app.get("/ping", (req: Request, res: Response, next: NextFunction) =>
 // Express config middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(morgan("dev"));
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3001",
+      "http://localhost:3000",
+      "https://maxthree.vercel.com",
+    ],
+    credentials: true,
+  })
+);
 
 // Routes
 app.use("/phrase", phraseRoutes);

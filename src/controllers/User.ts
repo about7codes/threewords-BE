@@ -1,6 +1,14 @@
-import { NextFunction, Request, Response } from "express";
+import { CookieOptions, NextFunction, Request, Response } from "express";
 import { verifyRefreshToken } from "../middleware/auth";
 import User from "../models/User";
+
+// Cookie options
+const cookieOptions: CookieOptions = {
+  httpOnly: true,
+  sameSite: "strict",
+  path: "/",
+  expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7), // 7 days
+};
 
 // Create a new User
 export const signup = async (
@@ -20,12 +28,16 @@ export const signup = async (
     const authToken = user.generateAuthToken();
     const refreshToken = user.generateRefreshToken();
 
-    return res.status(201).json({
-      message: "User created successfully",
-      refreshToken,
-      authToken,
-      user,
-    });
+    return res
+      .status(201)
+      .cookie("refreshToken", refreshToken, cookieOptions)
+      .cookie("authToken", authToken, cookieOptions)
+      .json({
+        message: "User created successfully",
+        refreshToken,
+        authToken,
+        user,
+      });
   } catch (error) {
     next(error);
   }
@@ -48,12 +60,16 @@ export const signin = async (
     const authToken = user.generateAuthToken();
     const refreshToken = user.generateRefreshToken();
 
-    return res.status(201).json({
-      message: "User logged in successfully",
-      refreshToken,
-      authToken,
-      user,
-    });
+    return res
+      .status(200)
+      .cookie("refreshToken", refreshToken, cookieOptions)
+      .cookie("authToken", authToken, cookieOptions)
+      .json({
+        message: "User logged in successfully",
+        refreshToken,
+        authToken,
+        user,
+      });
   } catch (error) {
     next(error);
   }
@@ -106,12 +122,16 @@ export const sendTokens = async (
 
     user.set({ password: undefined });
 
-    return res.json({
-      message: "Tokens sent successfully.",
-      refreshToken,
-      authToken,
-      user,
-    });
+    return res
+      .status(200)
+      .cookie("refreshToken", refreshToken, cookieOptions)
+      .cookie("authToken", authToken, cookieOptions)
+      .json({
+        message: "Tokens sent successfully.",
+        refreshToken,
+        authToken,
+        user,
+      });
   } catch (error) {
     next(error);
   }
