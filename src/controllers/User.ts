@@ -2,10 +2,10 @@ import { CookieOptions, NextFunction, Request, Response } from "express";
 import { verifyRefreshToken } from "../middleware/auth";
 import User from "../models/User";
 
-// Cookie options
+// Cookie options for JWT cookies
 const cookieOptions: CookieOptions = {
   httpOnly: true,
-  sameSite: "strict",
+  // sameSite: "strict",
   path: "/",
   expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7), // 7 days
 };
