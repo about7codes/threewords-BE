@@ -47,8 +47,7 @@ export const getAllPhrase = async (
     await req?.user?.populate("userPhrases");
     const allPhrases = req?.user?.userPhrases;
 
-    if (!allPhrases || allPhrases.length == 0)
-      throw new Error("No phrases found");
+    if (!allPhrases) throw new Error("No phrases found");
 
     return res.status(200).json({ phrases: allPhrases });
   } catch (error) {
