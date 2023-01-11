@@ -28,10 +28,10 @@ app.use(morgan("dev"));
 app.use(
   cors({
     origin: [
+      "https://threemax.vercel.app",
+      "https://threemax.vercel.com",
       "http://localhost:3001",
       "http://localhost:3000",
-      "https://threemax.vercel.com",
-      "https://threemax.vercel.app",
     ],
     credentials: true,
   })
