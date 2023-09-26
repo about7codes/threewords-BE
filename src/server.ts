@@ -28,6 +28,8 @@ app.use(morgan("dev"));
 app.use(
   cors({
     origin: [
+      "https://threemax.netlify.app",
+      "https://threemax.netlify.com",
       "https://threemax.vercel.app",
       "https://threemax.vercel.com",
       "http://localhost:3001",
